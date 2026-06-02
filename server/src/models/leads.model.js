@@ -24,6 +24,17 @@ const LeadsSchema = new Schema({
 
 LeadsSchema.statics.updateLead = async function (data) {
     try {
+        const oldEntry = await this.findOne({
+            datedAt: data.datedAt,
+            phone: data.phone
+        })
+        
+        if (oldEntry) {
+            if (oldEntry.isFoundInEnvy === true && data.isFoundInEnvy === false) {
+                console.log('Обновление пропущено для', data.phone, '- не изменяем isFoundInEnvy с true на false')
+                return
+            }
+        }
         const result = await this.findOneAndUpdate(
             { datedAt: data.datedAt, phone: data.phone },
             {
@@ -44,7 +55,7 @@ LeadsSchema.statics.updateLead = async function (data) {
                 }
             },
             { upsert: true }
-        )
+        );
         return result
     } catch (e) {
         console.log(`ошибка при обновление лида ${e.message}`)
