@@ -5,7 +5,7 @@ import dayjs from "dayjs"
 import leadsModel from "../models/leads.model.js"
 import mailingsModel from "../models/mailings.model.js"
 
-import { getLeads } from "../integrations/residence.service.js"
+import { getLeads, getResidenceToken } from "../integrations/residence.service.js"
 import tokensModel from "../models/tokens.model.js"
 
 const trafficRoute = Router()
@@ -45,7 +45,9 @@ function getTotalResultByTraffic(totalSumHold, totalSpent, gte, lte) {
 async function getResultTotal(totalSpent, gte, lte, broker = null, countUsers = null) {
 
     const daysCount = dayjs(lte).startOf('day').diff(dayjs(gte).startOf('day'), 'day') + 1
-    const residenceToken = await tokensModel.getToken('residence')
+    // const residenceToken = await tokensModel.getToken('residence')
+    const residenceToken = await getResidenceToken()
+
     const residenceLeads = await getLeads(residenceToken, gte, lte) || []
 
     let holdsSum = 0
