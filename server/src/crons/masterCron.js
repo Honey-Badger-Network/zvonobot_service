@@ -17,7 +17,7 @@ async function masterUpdateData(gte, lte) {
 
         console.log('masterCronData has been started !!!')
 
-
+        // получение токенов
         const zvonobotToken = await tokenModel.getToken('zvonobot')
         const residenceToken = await getResidenceToken()
         
@@ -29,29 +29,26 @@ async function masterUpdateData(gte, lte) {
         const zvonobotMailings = await getZvonobotMailings(zvonobotToken, gte, lte) || []
         console.log('Список активных ддля обработки расылок ....', zvonobotMailings)
 
-        // маисив 4 расылок дял теста сервиса чтобы долго не ждать
-        // let shortMailingsArray = zvonobotMailings.slice(1, 10)
+
+        // получение даных с интеграций сервисом
 
         const brokers = await getBrokers(residenceToken)
-
         // const uisCalls = await getUIScalls(uisToken, gte, lte, brokers)
-
         const residenceLeads = await getLeads(residenceToken, gte, lte)
         const envyboxCalls = await getEnvyBoxCalls(gte, lte)
         const residenceCalls = await getCallsByDate(residenceToken, gte, lte)
 
+        // главный цикл обработки расылок
         for (let mailing of zvonobotMailings) {
-        // for (let mailing of shortMailingsArray) {
-            // console.log(`идет итерация по расылки ${mailing.mailingName}:${mailing.mailingId}`)
             const fullMailingInfo = await prepaingMailing(mailing, zvonobotToken) || []
             zvonobotMailingsLeads.push(...fullMailingInfo.leadsInMailing)
-            // console.log(`получено с расылки ${fullMailingInfo.leadsInMailing.length} лидов`)
             const miniResult = await mailingsModel.updateData(fullMailingInfo)
 
             if (fullMailingInfo.mailingStatus === 'finished' || fullMailingInfo.mailingStatus === 'stopped') {
                 const result = await finishedMailingsModel.update(fullMailingInfo)
             }
 
+            // главный цикл по обработки лидов внутр ирасылоки
             fullMailingInfo.leadsInMailing.forEach((lead) => {
                 // let leadCallKey = uisCalls.find((call) => {
                 //     return call.contactPhone === lead.phone
@@ -108,10 +105,8 @@ async function masterUpdateData(gte, lte) {
 
             })
 
+            // цикл по переобновлению лидов в БД
             for (let lead of fullMailingInfo.leadsInMailing) {
-
-                console.log(lead, '!@*^#^&!@%*&#&!(@^*(!@(&*#P%*!@(*$(!@*&%$^(!@($&%^!@($(8')
-
                 const result = await leadsModel.updateLead(lead)
             }
 

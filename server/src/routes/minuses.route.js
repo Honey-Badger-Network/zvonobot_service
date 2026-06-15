@@ -3,6 +3,7 @@ import dayjs from "dayjs"
 import axios from "axios"
 
 import leadsModel from "../models/leads.model.js"
+import { getLeadsFromLidorubCRM } from "../integrations/leadorub.service.js"
 
 const minusesRoute = Router()
 
@@ -19,9 +20,13 @@ minusesRoute.get('/byDate', async (req, res) => {
             }
         })
 
+        const lidorubLeads = await getLeadsFromLidorubCRM(gte, lte)
+
+        console.log(lidorubLeads, '!@#!@#!@#!@#!@')
+
         let aggregatedData = {}
 
-        console.log(leadsByDate, '!!!!!!')
+        // console.log(leadsByDate, '!!!!!!')
 
         leadsByDate.forEach((lead) => {
 
@@ -60,7 +65,23 @@ minusesRoute.get('/byDate', async (req, res) => {
             }
         })
 
+        
         aggregatedData = Object.values(aggregatedData)
+
+        aggregatedData.forEach((broker) => {
+
+            let brokerLidroubDataKeyObject = lidorubLeads.find((item) => {
+                return item.broker === broker.broker
+            })
+
+            if (brokerLidroubDataKeyObject) {
+                broker.totalMinuses += brokerLidroubDataKeyObject.minuses
+                broker.countLidorubs = brokerLidroubDataKeyObject.count
+            }
+
+        })
+
+        console.log(aggregatedData, '*****&&&**&&')
 
         res.status(200).json({ data: aggregatedData })
 
