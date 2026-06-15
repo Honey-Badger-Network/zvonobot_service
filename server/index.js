@@ -21,7 +21,7 @@ const PORT = 9000
 const cronHour = '0 * * * *'
 
 // masterUpdateData(new Date(), new Date())
-// updateDataCron(cronHour)
+updateDataCron(cronHour)
 
 dotenv.config()
 
