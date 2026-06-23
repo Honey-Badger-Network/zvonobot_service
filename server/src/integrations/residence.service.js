@@ -1,16 +1,19 @@
 import axios from "axios"
 import dayjs from "dayjs"
+import https from "https"
 
 async function getResidenceToken() {
     try {
         const response = await axios.post('https://residence.hbnetwork.ru/api/login', {
             login: "3000@mail.ru",
             password: "3000"
-        })
+        }, { httpsAgent: new https.Agent({ rejectUnauthorized: false })})
+
         const token = response.data.data.token
         return token
     } catch (e) {
-        console.log(`ошибка получение ауф токена residence ${e.message}`)
+        console.log(`ошибка получение ауф токена residence: ${e.message}`)
+        return null
     }
 }
 
@@ -18,6 +21,7 @@ async function getBrokers(token) {
     try {
         let brokers = []
         const response = await axios.get('https://residence.hbnetwork.ru/api/users/', {
+            httpsAgent: new https.Agent({ rejectUnauthorized: false }),
             headers: { Authorization: `Bearer ${token}` },
             params: { 
                 _page: 1, 
@@ -60,6 +64,7 @@ function getBrokerByEmployId(lead, users) {
 async function getLeads(token, gte, lte) {
     try {
         const response = await axios.get('https://residence.hbnetwork.ru/api/leads', {
+            httpsAgent: new https.Agent({ rejectUnauthorized: false }),
             headers: { Authorization: `Bearer ${token}` },
             params: {
                 startedAt: [
@@ -82,6 +87,7 @@ async function getCallsByDate(token, gte, lte) {
         const minimyseArray = []
 
         const response = await axios.get('https://residence.hbnetwork.ru/api/calls', {
+            httpsAgent: new https.Agent({ rejectUnauthorized: false }),
             headers: { Authorization: `Bearer ${token}` },
             params: {
                 startedAt: [
