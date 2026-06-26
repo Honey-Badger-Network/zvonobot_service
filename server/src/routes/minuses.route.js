@@ -4,6 +4,7 @@ import axios from "axios"
 
 import leadsModel from "../models/leads.model.js"
 import { getLeadsFromLidorubCRM } from "../integrations/leadorub.service.js"
+import { getBrokersListWithRole } from "../integrations/residence.service.js"
 
 const minusesRoute = Router()
 
@@ -22,11 +23,12 @@ minusesRoute.get('/byDate', async (req, res) => {
 
         const lidorubLeads = await getLeadsFromLidorubCRM(gte, lte)
 
-        console.log(lidorubLeads, '!@#!@#!@#!@#!@')
+        // console.log(lidorubLeads, '!@#!@#!@#!@#!@')
 
         let aggregatedData = {}
 
         // console.log(leadsByDate, '!!!!!!')
+        const brokersList = await getBrokersListWithRole()
 
         leadsByDate.forEach((lead) => {
 
@@ -34,11 +36,23 @@ minusesRoute.get('/byDate', async (req, res) => {
 
             let priceToInput
 
-            if (lead.isAuto === true) {
+            let leadBrokerObject = brokersList.find((item) => {
+                return item.user === lead.broker
+            })
+
+            if (leadBrokerObject) {
+                lead.userRole = leadBrokerObject.userRole
+            }
+
+
+            // если этот лид авто и его бркоер на окладчик
+            if (lead.isAuto === true && lead.userRole === 'Окладчик 2.0') {
                 priceToInput = 5
             } else {
                 priceToInput = lead.stagePrice
             }
+
+            // priceToInput = lead.stagePrice
 
             if (aggregatedData[lead.broker]) {
                 aggregatedData[lead.broker].countInputs += 1
@@ -75,7 +89,7 @@ minusesRoute.get('/byDate', async (req, res) => {
             })
 
             if (brokerLidroubDataKeyObject) {
-                // broker.totalMinuses += brokerLidroubDataKeyObject.minuses
+                broker.totalMinuses += brokerLidroubDataKeyObject.minuses
                 // TODO потом вренуть прибавление минусов когад скажут !!!
                 broker.countLidorubs = brokerLidroubDataKeyObject.count
             }

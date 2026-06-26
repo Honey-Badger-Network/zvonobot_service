@@ -14,6 +14,10 @@ async function getLeadsFromLidorubCRM(gte, lte) {
 
         let aggregatedBrokerMinusesObject = {}
 
+        leadData = leadData.filter((item) => {
+            return item.statusOKK === true
+        })
+
         leadData.forEach((lead) => {
             if (aggregatedBrokerMinusesObject[lead.broker]) {
                 aggregatedBrokerMinusesObject[lead.broker].minuses += 20

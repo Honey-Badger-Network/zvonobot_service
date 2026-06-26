@@ -17,6 +17,42 @@ async function getResidenceToken() {
     }
 }
 
+async function getBrokersListWithRole() {
+    try {
+        let brokers = []
+
+        const token = await getResidenceToken()
+
+        const response = await axios.get('https://residence.hbnetwork.ru/api/users/', {
+            httpsAgent: new https.Agent({ rejectUnauthorized: false }),
+            headers: { Authorization: `Bearer ${token}` },
+            params: { 
+                _page: 1, 
+                _limit: 500,
+                _populate: 'rankId'
+            }
+        })
+
+        let users = response.data.data
+        const notAllowedRanks = ['Админ', 'Уволен', 'Стажер']
+
+        users = users.filter((user) => {
+            return !notAllowedRanks.includes(user.rankId.name)
+        })
+
+        users.forEach((user) => {
+            brokers.push({
+                user: user?.name ?? null,
+                userRole: user?.rankId?.name ?? null
+            })
+        })
+
+        return brokers
+    } catch (e) {
+        console.log('ошбика получения бркоеров из резиденции', e.message)
+    }
+}
+
 async function getBrokers(token) {
     try {
         let brokers = []
@@ -115,4 +151,4 @@ async function getCallsByDate(token, gte, lte) {
     }
 }
 
-export { getBrokers, getLeads, getBrokerByEmployId, getCallsByDate, getResidenceToken }
+export { getBrokers, getLeads, getBrokerByEmployId, getCallsByDate, getResidenceToken, getBrokersListWithRole }
