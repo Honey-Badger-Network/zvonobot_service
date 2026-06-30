@@ -54,14 +54,6 @@ async function masterUpdateData(gte, lte) {
                 //     return call.contactPhone === lead.phone
                 // })
 
-                let residenceCallKey = residenceCalls.find((call) => {
-                    return call.contactPhone === lead.phone
-                })
-    
-                let residenceKey = residenceLeads.filter((item) => {
-                    return item.phone === lead.phone
-                })
-    
                 if (Array.isArray(envyboxCalls)) {
                     let envyCallKey = envyboxCalls.find((call) => {
                         return call.phone === lead.phone.replace(/\D/g, '')
@@ -80,27 +72,50 @@ async function masterUpdateData(gte, lte) {
                         lead.envyCallId = null
                         lead.isFoundInEnvy = false
                     }
+                } else {
+                    lead.stageCode = null
+                    lead.stagePrice = 0
+                    lead.stage = null
+                    lead.envyCallId = null
+                    lead.isFoundInEnvy = false
                 }
 
-                if (residenceCallKey) {
-                    lead.broker = residenceCallKey.user
-                }
-    
-                if (residenceKey && residenceKey.length > 0) {
-                    lead.isResidence = true
-                    
-                    residenceKey.forEach((item) => {
-                        lead.statuses.push(item.status)
-                        lead.offerPrice += ['hold', 'confirmed', 'refused'].includes(item.status) ? item?.price?.offer : 0
+                if ( Array.isArray(residenceCalls)) {
 
-                        // если с зарплатананя => звонки не сомг найти и сопоставить бркоера (но был перевод в residence) тогда из лидов возьмем
-                        if (lead.isResidence === true && lead.broker === null) {
-                            console.log(`нашелся лид без определеного но с переводом ${lead.phone} сопоставим ему ${item?.userId?.name}`)
-                            lead.broker = item?.userId?.name || null
-                        }
-
+                    let residenceCallKey = residenceCalls.find((call) => {
+                        return call.contactPhone === lead.phone
+                    })
+        
+                    let residenceKey = residenceLeads.filter((item) => {
+                        return item.phone === lead.phone
                     })
 
+                    if (residenceCallKey) {
+                        lead.broker = residenceCallKey.user
+                    }
+        
+                    if (residenceKey && residenceKey.length > 0) {
+                        lead.isResidence = true
+                        
+                        residenceKey.forEach((item) => {
+                            lead.statuses.push(item.status)
+                            lead.offerPrice += ['hold', 'confirmed', 'refused'].includes(item.status) ? item?.price?.offer : 0
+    
+                            // если с зарплатананя => звонки не сомг найти и сопоставить бркоера (но был перевод в residence) тогда из лидов возьмем
+                            if (lead.isResidence === true && lead.broker === null) {
+                                console.log(`нашелся лид без определеного но с переводом ${lead.phone} сопоставим ему ${item?.userId?.name}`)
+                                lead.broker = item?.userId?.name || null
+                            }
+    
+                        })
+    
+                    }
+
+                } else {
+                    lead.broker = null
+                    lead.isResidence = false
+                    lead.statuses = []
+                    lead.offerPrice = 0
                 }
 
             })
@@ -111,7 +126,7 @@ async function masterUpdateData(gte, lte) {
             }
 
         }
-
+        console.log('лиды обновлены/созданы новые')
     } catch (e) {
         console.log(`ошибка в мастер кроне ${e.message}`)
     }
