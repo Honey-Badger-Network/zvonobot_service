@@ -20,6 +20,7 @@ async function masterUpdateData(gte, lte) {
         // получение токенов
         const zvonobotToken = await tokenModel.getToken('zvonobot')
         const residenceToken = await getResidenceToken()
+        const zvonobotAPIKey = await tokenModel.getToken('zvonobotApiKey')
         
         // const residenceToken = await tokenModel.getToken('residence')
         // const uisToken = await tokenModel.getToken('uis')
@@ -27,6 +28,8 @@ async function masterUpdateData(gte, lte) {
         const zvonobotMailingsLeads = []
 
         const zvonobotMailings = await getZvonobotMailings(zvonobotToken, gte, lte) || []
+        // const zvonobotMailings = await getZvonobotMailings(zvonobotAPIKey, gte, lte) || []
+
         console.log('Список активных ддля обработки расылок ....', zvonobotMailings)
 
 

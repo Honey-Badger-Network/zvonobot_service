@@ -14,6 +14,17 @@ async function getZvonobotMailings(token, gte, lte) {
             completedMailingsIds.push(mailing.mailingId)
         })
 
+        // TODO не работает (((((
+        // const zvonobotAuthQuery = await axios.post('https://lk.zvonobot.ru/api/users/auth', {
+        //     email: "simakowladimir@mail.ru",
+        //     password: 'qwertyuiop123A',
+        //     smartToken: 'dD0xNzgyOTgzNTcyO2k9MTA5LjE5NC41MS4yMDtEPUUyMzgyOTNFOTNENzcyOEM3NDM2RTg3NTQwQUM3NUQxMThBQUVGOTU2RkY3OUIzQkM1MUE3N0ZCMzNFRjQxNTM5OUFCNDg0QzQ2MjA3MzhFNzI3MDJEQ0Q4RkQyRjA0RUZDMUNCNzk5MUI3NzIzQzNEQ0VCNTNCRkY3MTU1RkZDMTBDOTk2MTY1RjhDQzZEM0NERTEzM0Y5MEVEMDt1PTE3ODI5ODM1NzI5OTAxNzk3MDI7aD0yMDg5YjYyODRlMmViYzA5MDA4ZGYxM2QzYjQwZDhjNw',
+        //     timezone: 'Europe/Moscow',
+        //     version: '272.03253'
+        // })
+
+        // console.log(zvonobotAuthQuery, '!!!!!!')
+
 
         const start = dayjs(gte).startOf('day').unix()
         const end = dayjs(lte).endOf('day').unix()

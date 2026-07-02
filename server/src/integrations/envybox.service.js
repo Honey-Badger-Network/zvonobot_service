@@ -114,8 +114,6 @@ async function getEnvyBoxCalls(gte, lte) {
                 callPrice = 10
             }
 
-            console.log(call, '&&*&&***&&&^&%*(&')
-
             minimysedData.push({
                 phone,
                 stage,
