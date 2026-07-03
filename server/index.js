@@ -16,6 +16,7 @@ import mailingRouter from './src/routes/mailings.router.js'
 import minusesRoute from './src/routes/minuses.route.js'
 import trafficRoute from './src/routes/traffic.route.js'
 import tokensRouter from './src/routes/tokens.router.js'
+import brokersRoute from './src/routes/brokers.router.js'
 
 const PORT = 9000
 const cronHour = '0 * * * *'
@@ -44,6 +45,7 @@ server.use('/api/mailings', mailingRouter)
 server.use('/api/minuses', minusesRoute)
 server.use('/api/traffic', trafficRoute)
 server.use('/api/tokens', tokensRouter)
+server.use('/api/brokers', brokersRoute)
 
 // подклчюение html файлов
 

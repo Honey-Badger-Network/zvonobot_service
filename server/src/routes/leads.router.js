@@ -47,14 +47,29 @@ leadsRouter.get('/getNullBrokerLeads', async (req, res) => {
 leadsRouter.get('/getByDate', async (req, res) => {
     try {
 
-        const { gte, lte } = req.query
+        const { gte, lte, isNew, isAuto, broker } = req.query
 
-        const leadsByDate = await leadsModel.find({
+        const filterParams = {
             datedAt: {
                 $gte: dayjs(gte).format('YYYY-MM-DD'),
                 $lte: dayjs(lte).format('YYYY-MM-DD'),
             }
-        })
+        }
+
+        if (isNew !== undefined) {
+            filterParams.stageCode = isNew
+        }
+
+        if (isAuto !== undefined) {
+            filterParams.isAuto = isAuto
+        }
+
+        if (broker !== undefined) {
+            filterParams.broker = broker
+        }
+
+        console.log(filterParams, '!!!!')
+        const leadsByDate = await leadsModel.find(filterParams)
 
         res.status(200).json({ data: leadsByDate })
     } catch (e) {

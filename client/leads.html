@@ -25,6 +25,24 @@
             <h3>Таблица с лидами</h3>
             <input placeholder="gte" v-model="gte" type="date">
             <input placeholder="lte" v-model="lte" type="date">
+
+            <select v-model="filter.isAuto">
+                <option :value="null" label="all"></option>
+                <option :value="true" label="auto"></option>
+                <option :value="false" label="недвижка"></option>
+            </select>
+
+            <select v-model="filter.isNew">
+                <option :value="null" label="all"></option>
+                <option :value="'new'" label="новые"></option>
+                <option :value="'base'" label="старые"></option>
+            </select>
+
+            <select v-model="filter.broker">
+                <option :value="null" label="all"></option>
+                <option v-for="broker in brokersList" :value="broker.user" :label="broker.user"></option>
+            </select>
+
             <button @click="getLeads">Искать</button>
             <button @click="getNullLeads" style="background-color: rgb(27, 106, 27); margin-left: 20px;">скачать неопределные</button>
             <div style="overflow-x: scroll;">
@@ -210,7 +228,13 @@
                 gte: dayjs(new Date).format('YYYY-MM-DD'),
                 lte: dayjs(new Date).format('YYYY-MM-DD'),
                 leadsTable: [],
-                apiUrl: '/api/leads/'
+                apiUrl: '/api/leads/',
+                filter: {
+                    broker: null,
+                    isAuto: null,
+                    isNew: null
+                },
+                brokersList: []
             }
         },
         methods: {
@@ -219,7 +243,10 @@
                     const response = await axios.get(`${this.apiUrl}getByDate`, {
                         params: {
                             gte: this.gte,
-                            lte: this.lte
+                            lte: this.lte,
+                            isNew: this.filter.isNew,
+                            isAuto: this.filter.isAuto,
+                            broker: this.filter.broker
                         }
                     })
                     this.leadsTable = response.data.data
@@ -229,6 +256,14 @@
             },
             formater(date) {
                 return dayjs(date).format('HH:mm:ss')
+            },
+            async getBrokers() {
+                try {
+                    const response = await axios.get('/api/brokers/getAll', {})
+                    this.brokersList = response.data.data
+                } catch (e) {
+                    console.log(e.message)
+                }
             },
             async getNullLeads() {
                 try {
@@ -255,6 +290,9 @@
                     console.log(e.message)
                 }
             }
+        },
+        async beforeMount() {
+            await this.getBrokers()
         }
     })
 
