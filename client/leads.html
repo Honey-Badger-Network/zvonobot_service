@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <title>Zvonobot лиды</title>
+    <link rel="icon" href="https://m-files.cdnvideo.ru/lpfile/1/7/1/17132b3c0df3b9802560ee27788e85d5/-/crop/0x0x640x640/-/resize/94/-/resize/1920/f.png" />
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dayjs/dayjs.min.js"></script>
@@ -21,6 +22,42 @@
 
     <div id="app">
         <h1>Лиды</h1>
+
+        <div class="main" style="margin-bottom: 100px;">
+            <h4>Поиск инфомрации по телефону</h4>
+            <input v-model="findPhone" placeholder="телефон">
+            <button @click="findByPhone">искать</button>
+
+            <div v-if="infoByPhone">
+                <h4>вот что найдено по номеру телефона {{ findPhone }}</h4>
+
+                <div style="overflow-x: scroll;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>datedAt</th>
+                                <td>broker</td>
+                                <th>mailingName</th>
+                                <th>stage</th>
+                                <th>isAuto</th>
+                                <th>envyCallId</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(item, index) in infoByPhone">
+                                <td>{{ item.datedAt }}</td>
+                                <td>{{ item.broker ? item.broker : 'не разобраный' }}</td>
+                                <td>{{ item.mailingName }}</td>
+                                <td>{{ item.stage }}</td>
+                                <td>{{ item.isAuto ? 'авто' : 'не авто' }}</td>
+                                <td>{{ item.envyCallId }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
         <div class="main">
             <h3>Таблица с лидами</h3>
             <input placeholder="gte" v-model="gte" type="date">
@@ -45,6 +82,7 @@
 
             <button @click="getLeads">Искать</button>
             <button @click="getNullLeads" style="background-color: rgb(27, 106, 27); margin-left: 20px;">скачать неопределные</button>
+            
             <div style="overflow-x: scroll;">
                 <table>
                     <thead>
@@ -159,7 +197,7 @@
         color: #34495e;
     }
 
-    #app input {
+    #app input, select {
         padding: 10px 15px;
         margin-right: 10px;
         border: 1px solid #ccc;
@@ -234,7 +272,9 @@
                     isAuto: null,
                     isNew: null
                 },
-                brokersList: []
+                brokersList: [],
+                findPhone: '',
+                infoByPhone: null
             }
         },
         methods: {
@@ -250,6 +290,19 @@
                         }
                     })
                     this.leadsTable = response.data.data
+                } catch (e) {
+                    console.log(e.message)
+                }
+            },
+            async findByPhone() {
+                try {
+                    const response = await axios.get(`${this.apiUrl}getByPhone`, {
+                        params: {
+                            phone: this.findPhone   
+                        }
+                    })
+                    console.log(response)
+                    this.infoByPhone = response.data.data
                 } catch (e) {
                     console.log(e.message)
                 }

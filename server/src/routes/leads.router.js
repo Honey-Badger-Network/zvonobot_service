@@ -17,6 +17,19 @@ leadsRouter.get('/getAll', async (req, res) => {
     }
 })
 
+leadsRouter.get('/getByPhone', async (req, res) => {
+    try {
+        const { phone } = req.query
+        const data = await leadsModel.find({
+            phone: phone
+        })
+        res.status(200).json({ data: data })
+    } catch (e) {
+        console.log(e.message)
+        res.status(500).json({ err: e.message })
+    }
+})
+
 leadsRouter.get('/getNullBrokerLeads', async (req, res) => {
     try {
 
