@@ -44,7 +44,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(minuse, idx) in minusesTable">
+                        <tr v-for="(minuse, idx) in minusesTable" :class="minuse.onBaseSalary ? 'coloredRow' : ''">
                             <td>{{ minuse.broker }}</td>
                             <td>{{ minuse.countInputs }}</td>
                             <td>{{ minuse.countLeads }}</td>
@@ -54,7 +54,7 @@
                             <td>{{ minuse.countNew }}</td>
                             <td>{{ minuse.countBase }}</td>
                             <td>{{ minuse.countAuto }}</td>
-                            <td>{{ minuse.countLidorubs }}</td>
+                            <td>{{ minuse.countLidorubs || 0 }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -178,6 +178,14 @@ th, td {
     text-align: left;
     border-bottom: 1px solid #ddd;
     font-size: 0.95em;
+}
+
+.coloredRow {
+    background-color: #f2d3fe;
+}
+
+.coloredRow:hover {
+    background-color: #e1cce8;
 }
 
 tbody tr:hover {

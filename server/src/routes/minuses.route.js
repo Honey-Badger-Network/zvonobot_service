@@ -46,13 +46,17 @@ minusesRoute.get('/byDate', async (req, res) => {
 
 
             // если этот лид авто и его бркоер на окладчик
-            if (lead.isAuto === true && lead.userRole === 'Окладчик 2.0') {
+            // if (lead.isAuto === true && lead.userRole === 'Окладчик 2.0') {
+            //     priceToInput = 5
+            // } else {
+            //     priceToInput = lead.stagePrice
+            // }
+
+            if (lead.userRole === 'Окладчик 2.0') {
                 priceToInput = 5
             } else {
-                priceToInput = lead.stagePrice
+                priceToInput = 10
             }
-
-            // priceToInput = lead.stagePrice
 
             if (aggregatedData[lead.broker]) {
                 aggregatedData[lead.broker].countInputs += 1
@@ -67,6 +71,7 @@ minusesRoute.get('/byDate', async (req, res) => {
             } else {
                 aggregatedData[lead.broker] = {
                     broker: lead.broker,
+                    onBaseSalary: lead.userRole === 'Окладчик 2.0', // брокер оклдачик или нет
                     countInputs: 1,
                     countLeads: lead.isResidence ? 1 : 0,
                     offerPrice: lead.offerPrice,
@@ -89,8 +94,8 @@ minusesRoute.get('/byDate', async (req, res) => {
             })
 
             if (brokerLidroubDataKeyObject) {
-                broker.totalMinuses += brokerLidroubDataKeyObject.minuses
-                // TODO потом вренуть прибавление минусов когад скажут !!!
+                // broker.totalMinuses += brokerLidroubDataKeyObject.minuses
+                broker.totalMinuses += broker.onBaseSalary ? (brokerLidroubDataKeyObject.count * 5) : (brokerLidroubDataKeyObject.count * 10)
                 broker.countLidorubs = brokerLidroubDataKeyObject.count
             }
 
