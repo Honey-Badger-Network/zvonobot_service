@@ -94,8 +94,8 @@ minusesRoute.get('/byDate', async (req, res) => {
             })
 
             if (brokerLidroubDataKeyObject) {
-                // broker.totalMinuses += brokerLidroubDataKeyObject.minuses
-                broker.totalMinuses += broker.onBaseSalary ? (brokerLidroubDataKeyObject.count * 5) : (brokerLidroubDataKeyObject.count * 10)
+                broker.totalMinuses += brokerLidroubDataKeyObject.minuses
+                // broker.totalMinuses += broker.onBaseSalary ? (brokerLidroubDataKeyObject.count * 5) : (brokerLidroubDataKeyObject.count * 10)
                 broker.countLidorubs = brokerLidroubDataKeyObject.count
             }
 
