@@ -39,6 +39,10 @@
             <button style="background-color: #34495e;" @click="checkToken">проверить токен звонобот</button>
             <button style="background-color: #162a3e;" @click="checkTokenResidence">проверить токен резиденции</button>
         </div>
+        <div>
+            <input v-model="date" type="date">
+            <button @click="updateCron">Обновить даные</button>
+        </div>
     </div>
 </body>
 </html>
@@ -188,7 +192,9 @@ button:hover {
                 editService: '',
                 editSelfToken: '',
                 apiUrl: '/api/tokens/',
-                services: []
+                cronUrl: '/api/crons/',
+                services: [],
+                date: dayjs(new Date).format('YYYY-MM-DD'),
             }
         },
         methods: {
@@ -203,6 +209,18 @@ button:hover {
 
                     this.editService = this.services[0]
 
+                } catch (e) {
+                    console.log(e.message)
+                }
+            },
+            async updateCron() {
+                try {
+                    const response = await axios.get(`${this.cronUrl}update`, {
+                        params: {
+                            date: this.date
+                        }
+                    })
+                    console.log(response, '*&(*&(*&*(*(&))))')
                 } catch (e) {
                     console.log(e.message)
                 }

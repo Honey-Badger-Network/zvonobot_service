@@ -17,6 +17,7 @@ import minusesRoute from './src/routes/minuses.route.js'
 import trafficRoute from './src/routes/traffic.route.js'
 import tokensRouter from './src/routes/tokens.router.js'
 import brokersRoute from './src/routes/brokers.router.js'
+import cronRouter from './src/routes/crones.router.js'
 
 const PORT = 9000
 const cronHour = '0 * * * *'
@@ -46,6 +47,7 @@ server.use('/api/minuses', minusesRoute)
 server.use('/api/traffic', trafficRoute)
 server.use('/api/tokens', tokensRouter)
 server.use('/api/brokers', brokersRoute)
+server.use('/api/crons', cronRouter)
 
 // подклчюение html файлов
 
