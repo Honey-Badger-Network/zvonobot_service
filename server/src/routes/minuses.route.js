@@ -23,7 +23,7 @@ minusesRoute.get('/byDate', async (req, res) => {
 
         const lidorubLeads = await getLeadsFromLidorubCRM(gte, lte)
 
-        // console.log(lidorubLeads, '!@#!@#!@#!@#!@')
+        console.log(lidorubLeads, '!@#!@#!@#!@#!@')
 
         let aggregatedData = {}
 
@@ -87,19 +87,65 @@ minusesRoute.get('/byDate', async (req, res) => {
         
         aggregatedData = Object.values(aggregatedData)
 
-        aggregatedData.forEach((broker) => {
+        // aggregatedData.forEach((broker) => {
 
-            let brokerLidroubDataKeyObject = lidorubLeads.find((item) => {
-                return item.broker === broker.broker
-            })
+        //     let brokerLidroubDataKeyObject = lidorubLeads.find((item) => {
+        //         return item.broker === broker.broker
+        //     })
 
-            if (brokerLidroubDataKeyObject) {
-                broker.totalMinuses += brokerLidroubDataKeyObject.minuses
-                // broker.totalMinuses += broker.onBaseSalary ? (brokerLidroubDataKeyObject.count * 5) : (brokerLidroubDataKeyObject.count * 10)
-                broker.countLidorubs = brokerLidroubDataKeyObject.count
+        //     if (brokerLidroubDataKeyObject) {
+        //         broker.totalMinuses += brokerLidroubDataKeyObject.minuses
+        //         broker.countLidorubs = brokerLidroubDataKeyObject.count
+        //     }
+        // })
+
+        const aggregatedByBroker = new Map(
+            aggregatedData.map(broker => [broker.broker, broker])
+        )
+
+        for (const lidorub of lidorubLeads) {
+            const broker = aggregatedByBroker.get(lidorub.broker)
+
+            if (broker) {
+                broker.totalMinuses += Number(lidorub.minuses) || 0
+                broker.countLidorubs = Number(lidorub.count) || 0
+            } else {
+                const newBroker = {
+                    broker: lidorub.broker,
+                    onBaseSalary: false,
+                    countInputs: 0,
+                    countLeads: 0,
+                    offerPrice: 0,
+                    countHold: 0,
+                    totalMinuses: Number(lidorub.minuses) || 0,
+                    countNew: 0,
+                    countBase: 0,
+                    countAuto: 0,
+                    countLidorubs: Number(lidorub.count) || 0,
+                };
+
+                aggregatedData.push(newBroker)
+                aggregatedByBroker.set(lidorub.broker, newBroker)
             }
+        }
 
-        })
+        // if (aggregatedData.length === 0) {
+        //     lidorubLeads.forEach((brokerData) => {
+        //         aggregatedData.push({
+        //             broker: brokerData.broker,
+        //             onBaseSalary: false,
+        //             countInputs: 0,
+        //             countLeads: 0,
+        //             offerPrice: 0,
+        //             countHold: 0,
+        //             totalMinuses: brokerData.minuses,
+        //             countNew: 0,
+        //             countBase: 0,
+        //             countAuto: 0,
+        //             countLidorubs: brokerData.count
+        //         })
+        //     })
+        // }
 
         console.log(aggregatedData, '*****&&&**&&')
 
