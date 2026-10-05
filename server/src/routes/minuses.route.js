@@ -23,7 +23,7 @@ minusesRoute.get('/byDate', async (req, res) => {
 
         const lidorubLeads = await getLeadsFromLidorubCRM(gte, lte)
 
-        console.log(lidorubLeads, '!@#!@#!@#!@#!@')
+        // console.log(lidorubLeads, '!@#!@#!@#!@#!@')
 
         let aggregatedData = {}
 
