@@ -70,7 +70,7 @@ minusesRoute.get('/byDate', async (req, res) => {
 
             } else {
                 aggregatedData[lead.broker] = {
-                    broker: lead.broker,
+                    broker: lead.broker || 'Не определено',
                     onBaseSalary: lead.userRole === 'Окладчик 2.0', // брокер оклдачик или нет
                     countInputs: 1,
                     countLeads: lead.isResidence ? 1 : 0,
@@ -146,6 +146,33 @@ minusesRoute.get('/byDate', async (req, res) => {
         //         })
         //     })
         // }
+
+        const total = aggregatedData.reduce((sum, broker) => {
+            sum.countInputs += broker.countInputs || 0
+            sum.countLeads += broker.countLeads || 0
+            sum.offerPrice += broker.offerPrice || 0
+            sum.countHold += broker.countHold || 0
+            sum.totalMinuses += broker.totalMinuses || 0
+            sum.countNew += broker.countNew || 0
+            sum.countBase += broker.countBase || 0
+            sum.countAuto += broker.countAuto || 0
+            sum.countLidorubs += broker.countLidorubs || 0
+
+            return sum
+        }, {
+            broker: 'total values',
+            countInputs: 0,
+            countLeads: 0,
+            offerPrice: 0,
+            countHold: 0,
+            totalMinuses: 0,
+            countNew: 0,
+            countBase: 0,
+            countAuto: 0,
+            countLidorubs: 0,
+        })
+
+        aggregatedData.push(total)
 
         console.log(aggregatedData, '*****&&&**&&')
 

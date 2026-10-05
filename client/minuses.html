@@ -44,8 +44,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="(minuse, idx) in minusesTable" :class="minuse.onBaseSalary ? 'coloredRow' : ''">
-                            <td>{{ minuse.broker }}</td>
+                        <tr v-for="(minuse, idx) in minusesTable" :class="getClassByUserRow(minuse)">
+                            <td>{{ minuse.broker }} {{ minuse.onBaseSalary ? '(оклад)' : '' }}</td>
                             <td>{{ minuse.countInputs }}</td>
                             <td>{{ minuse.countLeads }}</td>
                             <td>{{ minuse.countHold }}</td>
@@ -180,12 +180,30 @@ th, td {
     font-size: 0.95em;
 }
 
-.coloredRow {
+/* .coloredRow {
     background-color: #f2d3fe;
+} */
+
+.coloredRowTotal {
+    background-color: #2a2a2a;
+    color: white;
 }
 
-.coloredRow:hover {
+.coloredRowNull {
+    background-color: #a08fe7;
+}
+
+/* .coloredRow:hover {
     background-color: #e1cce8;
+} */
+
+.coloredRowTotal:hover {
+    background-color: #3b3b3b;
+    color: white;
+}
+
+.coloredRowNull:hover {
+    background-color: #bbacf6;
 }
 
 tbody tr:hover {
@@ -236,6 +254,13 @@ tbody tr:hover {
                     this.minusesTable = response.data.data
                 } catch (e) {
                     console.log(e.message)
+                }
+            },
+            getClassByUserRow(row) {
+                 if (row.broker === 'total values') {
+                    return 'coloredRowTotal'
+                } else if (row.broker === 'Не определено') {
+                    return 'coloredRowNull'
                 }
             }
         }
