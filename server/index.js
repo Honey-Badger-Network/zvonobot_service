@@ -35,6 +35,7 @@ const DATABASE_NAME = process.env.DATABASE_NAME
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
+const clientDistPath = path.join(__dirname, '../client/dist')
 
 const server = express()
 
@@ -49,26 +50,10 @@ server.use('/api/tokens', tokensRouter)
 server.use('/api/brokers', brokersRoute)
 server.use('/api/crons', cronRouter)
 
-// подклчюение html файлов
+server.use(express.static(clientDistPath))
 
-server.get('/tokens', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/tokens.html'))
-})
-
-server.get('/leads', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/leads.html'))
-})
-
-server.get('/minuses', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/minuses.html'))
-})
-
-server.get('/traffic', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/traffic.html'))
-})
-
-server.get('/mailings', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/mailings.html'))
+server.get(['/', '/tokens', '/leads', '/minuses', '/traffic', '/mailings'], (req, res) => {
+    res.sendFile(path.join(clientDistPath, 'index.html'))
 })
 
 async function startConnectToDB() {
