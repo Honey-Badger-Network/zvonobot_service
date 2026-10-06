@@ -1,8 +1,8 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
-const API_PROXY_TARGET = 'http://localhost:9000'
-// const API_PROXY_TARGET = 'http://31.130.151.240:9000'
+// const API_PROXY_TARGET = 'http://localhost:9000'
+const API_PROXY_TARGET = 'http://31.130.151.240:9000'
 
 export default defineConfig({
     plugins: [vue()],

@@ -40,13 +40,15 @@ npm start
 Соберите образ из корня репозитория:
 
 ```bash
-docker build -t zvonobot-service .
+docker build -t webcoder2/zvonobot2 .
+docker push webcoder2/zvonobot2
 ```
 
 Запустите контейнер, передав серверные переменные из `server/.env`:
 
 ```bash
-docker run --name zvonobot-service --restart unless-stopped --env-file server/.env -p 9000:9000 zvonobot-service
+docker pull webcoder2/zvonobot2
+docker run --name zvonobot2 -p 9000:9000 -p 8000:8000 webcoder2/zvonobot2
 ```
 
 Приложение будет доступно на `http://localhost:9000`. Один контейнер запускает backend и раздаёт собранный frontend.
