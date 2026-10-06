@@ -48,7 +48,7 @@ docker push webcoder2/zvonobot2
 
 ```bash
 docker pull webcoder2/zvonobot2
-docker run --name zvonobot2 -p 9000:9000 -p 8000:8000 webcoder2/zvonobot2
+docker run --name zvonobot2 -p 9000:9000 webcoder2/zvonobot2
 ```
 
 Приложение будет доступно на `http://localhost:9000`. Один контейнер запускает backend и раздаёт собранный frontend.

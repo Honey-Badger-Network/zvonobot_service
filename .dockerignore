@@ -1,7 +1,0 @@
-.git
-.gitignore
-**/node_modules
-**/.env
-client/dist
-npm-debug.log*
-.DS_Store
