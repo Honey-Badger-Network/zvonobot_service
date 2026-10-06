@@ -1,22 +1,15 @@
-FROM node:20-slim AS frontend-build
+FROM node:20-slim
 
-WORKDIR /app/client
-COPY client/package*.json ./
-RUN npm install
-COPY client/ ./
-RUN npm run build
-
-FROM node:20-slim AS production
-
-ENV NODE_ENV=production
 WORKDIR /app
 
-COPY server/package*.json ./server/
-RUN cd server && npm install --omit=dev
+COPY . .
 
-COPY server/ ./server/
-COPY --from=frontend-build /app/client/dist ./client/dist
+RUN npm install \
+    && npm --prefix server install \
+    && npm --prefix client install \
+    && npm --prefix client run build
 
+ENV NODE_ENV=production
 EXPOSE 9000
 
-CMD ["node", "server/index.js"]
+CMD ["npm", "start"]
