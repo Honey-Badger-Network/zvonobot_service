@@ -47,6 +47,7 @@ docker push webcoder2/zvonobot2
 Запустите контейнер, передав серверные переменные из `server/.env`:
 
 ```bash
+docker rm -f zvonobot2
 docker pull webcoder2/zvonobot2
 docker run --name zvonobot2 -p 9000:9000 webcoder2/zvonobot2
 ```
