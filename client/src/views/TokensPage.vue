@@ -30,6 +30,20 @@
         </section>
 
         <section class="panel">
+            <div class="panel-header"><div><h2>Проверить токен</h2><p>Проверяет сохранённый токен запросом к API сервиса</p></div></div>
+            <div class="panel-body">
+                <el-form label-position="top">
+                    <el-form-item label="Сервис">
+                        <el-select v-model="checkService" placeholder="Выберите сервис" style="width:100%">
+                            <el-option label="Звонобот" value="zvonobot" />
+                        </el-select>
+                    </el-form-item>
+                    <el-button type="primary" :icon="CircleCheck" :loading="checkingToken" @click="checkToken">Проверить токен</el-button>
+                </el-form>
+            </div>
+        </section>
+
+        <section class="panel">
             <div class="panel-header"><div><h2>Ручное обновление</h2><p>Запустить мастер-крон за выбранную дату</p></div></div>
             <div class="panel-body">
                 <el-form label-position="top">
@@ -43,13 +57,13 @@
 
 <script>
 import dayjs from 'dayjs'
-import { Refresh, View, Hide, VideoPlay } from '@element-plus/icons-vue'
+import { Refresh, View, Hide, VideoPlay, CircleCheck } from '@element-plus/icons-vue'
 import api, { getErrorMessage } from '../api.js'
 
 export default {
     name: 'TokensPage',
     data() {
-        return { Refresh, View, Hide, VideoPlay, tokens: [], visible: {}, loading: false, saving: false, cronLoading: false, cronDate: dayjs().format('YYYY-MM-DD'), form: { service: '', token: '' } }
+        return { Refresh, View, Hide, VideoPlay, CircleCheck, tokens: [], visible: {}, loading: false, saving: false, checkingToken: false, checkService: 'zvonobot', cronLoading: false, cronDate: dayjs().format('YYYY-MM-DD'), form: { service: '', token: '' } }
     },
     methods: {
         mask(value = '') { return value.length < 12 ? '••••••••' : `${value.slice(0, 6)}••••••••••${value.slice(-5)}` },
@@ -71,6 +85,14 @@ export default {
                 await this.loadTokens()
                 this.$message.success('Токен обновлён')
             } catch (error) { this.$message.error(getErrorMessage(error)) } finally { this.saving = false }
+        },
+        async checkToken() {
+            if (!this.checkService) return this.$message.warning('Выберите сервис')
+            this.checkingToken = true
+            try {
+                await api.get(`/tokens/check/${this.checkService}`)
+                this.$message.success('Токен Звонобота работает')
+            } catch (error) { this.$message.error(getErrorMessage(error)) } finally { this.checkingToken = false }
         },
         async runCron() {
             this.cronLoading = true
